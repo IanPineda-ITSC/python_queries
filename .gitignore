@@ -1,0 +1,6 @@
+env/
+archived/
+*.xlsx
+*.csv
+config.ini
+__pycache__/
