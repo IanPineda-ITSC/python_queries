@@ -1,8 +1,10 @@
-from snowflake.snowpark.functions import col, lower, upper, to_char, concat
+from snowflake.snowpark.functions import col, lower, upper, to_char, concat, lit
 from snowflake.snowpark import Session, DataFrame
 
 def get_transacciones_olo(session: Session) -> DataFrame:
     """
+    Funcion que genera un DataFrame de snowpark con las transacciones totales de olo.
+    
     Columnas:
 
     (Ocupadas)
@@ -69,7 +71,7 @@ def get_transacciones_olo(session: Session) -> DataFrame:
         mx_power_sales_log
         .join(dpm_sales_full, on = ['ORDER_NUMBER', 'LOCATION_CODE','FECHA'])
         .with_column('VENTA', col('ORDERFINALPRICE') / 1.16)
-        .with_column('ORDER_ID', concat(to_char(col('FECHA')), '-', col('LOCATION_CODE'), '-', col('ORDER_NUMBER')))
+        .with_column('ORDER_ID', concat(to_char(col('FECHA')), lit('-'), col('LOCATION_CODE'), lit('-'), col('ORDER_NUMBER')))
         .with_column('ID_CLIENTE', concat(col('LOCATION_CODE'), col('CUSTOMER_CODE')))
         .with_column_renamed('PHONENUMBER', 'PHONE')
         .with_column_renamed('LOCATION_CODE', 'STORE_ID')
