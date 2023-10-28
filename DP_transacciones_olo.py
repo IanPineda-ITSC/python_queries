@@ -3,7 +3,7 @@ from snowflake.snowpark import Session, DataFrame
 
 def get_transacciones_olo(session: Session) -> DataFrame:
     """
-    Funcion que genera un DataFrame de snowpark con las transacciones totales de olo.
+    Genera un DataFrame de snowpark con las transacciones totales de olo.
     
     Columnas:
 
