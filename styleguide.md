@@ -20,9 +20,12 @@ una descripcion de lo que es la columna.
 
 Despues un listado del total de columnas que se entregan con el DataFrame.
 
-Finalmente, una descripcion de los parametros que pide la funcion
+En caso que el total de las columnas sean ocupadas, listarlas como (Total) pero
+con su respectiva descripcion.
 
-Nota: No comentar el parametro session
+Finalmente, una descripcion de los parametros que pide la funcion.
+
+Nota: No comentar el parametro session.
 
 ## Definiciones
 
