@@ -2,6 +2,35 @@ from snowflake.snowpark.functions import col, substring, lower, concat
 from snowflake.snowpark import Session, DataFrame   
 
 def get_transacciones_cloud(session: Session) -> DataFrame:
+    """
+    Genera un DataFrame de snowpark con las transacciones de GOLO DP
+
+    Columnas:
+
+    (Ocupadas)
+
+    EMAIL: Email del usuario
+
+    FECHA: Fecha de la transaccion
+    
+    VENTA: Cantidad de venta sin iva
+
+    ORDER_ID: Identificador de la transaccion
+
+    PHONE: Telefono del usuario
+
+    STORE_ID: Identificador de la tienda
+
+    TIENE_CUPON: Valor booleano que nos dice si la venta fue con algun cupon
+
+    (Total)
+
+    STOREPLACEORDERTIME, PLACEORDERTIME, STORE_ID, STOREORDERID, FUTUREORDERTIME,
+    CUSTOMERID, PHONE, FIRSTNAME, LASTNAME, SERVICEMETHOD, SOURCEORGANIZATIONURI,
+    COUPONSCODE, PAYMENTSAMOUNT, PAYMENTSTYPE, PAYMENTSCARDTYPE, PAYMENTSTRANSACTIONID,
+    PAYMENTSPROVIDERID, FILE_NAME, FECHA, EMAIL, ORDER_ID, VENTA, TIENE_CUPON
+    """
+
     transacciones_cloud = (
         session.table('SEGMENT_EVENTS.DOMINOS_GOLO.VENTA_CLOUD')
         .filter(~col('STOREID').like('9%'))
@@ -11,7 +40,8 @@ def get_transacciones_cloud(session: Session) -> DataFrame:
         .with_column('EMAIL', lower(col('EMAIL')))
         .with_column('ORDER_ID', concat(col('FECHA'), col('STOREID'), col('STOREORDERID')))
         .with_column('VENTA', col('PAYMENTSAMOUNT') / 1.16)
-        .select(['EMAIL', 'FECHA', 'VENTA', 'ORDER_ID', 'PHONE'])
+        .with_column_renamed('STOREID', 'STORE_ID')
+        .with_column('TIENE_CUPON', col('COUPONSCODE').is_not_null())
     )
 
     return transacciones_cloud
