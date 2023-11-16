@@ -1,7 +1,6 @@
-from DP_transacciones_total import get_transacciones_dp_total
 from general_rangos_de_fecha import get_rangos
 from snowflake.snowpark import Session, DataFrame
-from snowflake.snowpark.functions import col, count_distinct
+from snowflake.snowpark.functions import col
 from typing import Literal
 
 def get_activos_en_serie_de_tiempo(session: Session, transacciones_total:DataFrame, serie_de_tiempo:list[Literal['ANIO_ALSEA', 'MES_ALSEA', 'SEM_ALSEA', 'FECHA']], intervalo_de_dias:int = 180) -> DataFrame:
@@ -19,8 +18,6 @@ def get_activos_en_serie_de_tiempo(session: Session, transacciones_total:DataFra
         .join(rangos)
         .filter(col('FECHA_INICIO') <= col('FECHA'))
         .filter(col('FECHA') <= col('FECHA_FIN'))
-        .group_by('ANIO_ALSEA', 'SEM_ALSEA')
-        .agg(count_distinct('EMAIL').alias('ACTIVOS'))
     )
 
     return res
