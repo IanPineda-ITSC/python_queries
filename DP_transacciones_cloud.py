@@ -1,9 +1,10 @@
 from snowflake.snowpark.functions import col, substring, lower, concat
 from snowflake.snowpark import Session, DataFrame   
+from DP_correos_call_centre import get_correos_call_centre
 
 def get_transacciones_cloud(session: Session) -> DataFrame:
     """
-    Genera un DataFrame de snowpark con las transacciones de GOLO DP
+    Genera un DataFrame de snowpark con las transacciones de GOLO DP, excluyendo aquellas que sean de call centre
 
     Columnas:
 
@@ -44,4 +45,11 @@ def get_transacciones_cloud(session: Session) -> DataFrame:
         .with_column('TIENE_CUPON', col('COUPONSCODE').is_not_null())
     )
 
-    return transacciones_cloud
+    correos_call_centre = get_correos_call_centre(session)
+
+    transacciones_cloud_sin_call_centre = (
+        transacciones_cloud
+        .join(correos_call_centre, on = 'EMAIL', how = 'leftanti')
+    )
+
+    return transacciones_cloud_sin_call_centre
