@@ -1,9 +1,11 @@
 from snowflake.snowpark.functions import col, lower, upper, to_char, concat, lit
 from snowflake.snowpark import Session, DataFrame
+from DP_correos_call_centre import get_correos_call_centre
 
 def get_transacciones_olo(session: Session) -> DataFrame:
     """
-    Genera un DataFrame de snowpark con las transacciones totales de olo.
+    Genera un DataFrame de snowpark con las transacciones totales de olo, excluyendo
+    aquellas que sean de call centre.
     
     Columnas:
 
@@ -75,7 +77,11 @@ def get_transacciones_olo(session: Session) -> DataFrame:
         .with_column('ID_CLIENTE', concat(col('LOCATION_CODE'), col('CUSTOMER_CODE')))
         .with_column_renamed('PHONENUMBER', 'PHONE')
         .with_column_renamed('LOCATION_CODE', 'STORE_ID')
-        .with_column('TIENE_CUPON', col('ORDERCOUPONSNUMBER') > 0)
+        .with_column('TIENE_CUPON', col('ORDERLINEDISCOUNTAMT') > 0)
     )
 
-    return transacciones_olo
+    correos_call_centre = get_correos_call_centre(session)
+
+    transacciones_olo_sin_call_centre = transacciones_olo.join(correos_call_centre, on = 'EMAIL', how = 'leftanti')
+
+    return transacciones_olo_sin_call_centre
