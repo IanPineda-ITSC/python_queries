@@ -1,4 +1,5 @@
 from snowflake.snowpark.functions import col, substring, lower, concat
+import snowflake.snowpark.functions as fn
 from snowflake.snowpark import Session, DataFrame   
 from DP_correos_call_centre import get_correos_call_centre
 
@@ -43,6 +44,12 @@ def get_transacciones_cloud(session: Session) -> DataFrame:
         .with_column('VENTA', col('PAYMENTSAMOUNT') / 1.16)
         .with_column_renamed('STOREID', 'STORE_ID')
         .with_column('TIENE_CUPON', col('COUPONSCODE').is_not_null())
+        .with_column(
+            'CANAL',
+            fn.when(fn.col('SOURCEORGANIZATIONURI') == 'iphone.dominos.mx', 'IOS')
+            .when(fn.col('SOURCEORGANIZATIONURI') == 'android.dominos.mx', 'ANDROID')
+            .otherwise('WEB')
+        )
     )
 
     correos_call_centre = get_correos_call_centre(session)

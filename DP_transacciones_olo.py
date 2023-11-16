@@ -1,4 +1,5 @@
 from snowflake.snowpark.functions import col, lower, upper, to_char, concat, lit
+import snowflake.snowpark.functions as fn
 from snowflake.snowpark import Session, DataFrame
 from DP_correos_call_centre import get_correos_call_centre
 
@@ -78,6 +79,13 @@ def get_transacciones_olo(session: Session) -> DataFrame:
         .with_column_renamed('PHONENUMBER', 'PHONE')
         .with_column_renamed('LOCATION_CODE', 'STORE_ID')
         .with_column('TIENE_CUPON', col('ORDERLINEDISCOUNTAMT') > 0)
+        .with_column(
+            'CANAL',
+            fn.when(fn.col('SOURCE_CODE').isin('ANDROID', 'ANDROID2'), 'ANDROID')
+            .when(fn.col('SOURCE_CODE').isin('IOS', 'IOSAPP'), 'IOS')
+            .when(fn.col('SOURCE_CODE').isin('DESKTOP', 'MOBILE', 'WEB', 'DESKTOP2', 'MOBILE2'), 'WEB')
+            .otherwise(fn.col('SOURCE_CODE'))
+        )
     )
 
     correos_call_centre = get_correos_call_centre(session)

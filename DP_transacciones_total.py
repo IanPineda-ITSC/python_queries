@@ -26,17 +26,19 @@ def get_transacciones_dp_total(session: Session) -> DataFrame:
     TIENE_CUPON: Valor booleano que nos dice si la venta fue con algun cupon
 
     FUENTE: [OLO, CLOUD] Fuente de la que proviene la transaccion
+
+    CANAL: [IOS, ANDROID, WEB, WHATSAPP] Canal en el que se genero la transaccion
     """
 
     transacciones_olo = (
         get_transacciones_olo(session)
         .with_column('FUENTE', lit('OLO'))
-        .select(['EMAIL', 'FECHA', 'VENTA', 'ORDER_ID', 'PHONE', 'STORE_ID', 'TIENE_CUPON', 'FUENTE'])
+        .select(['EMAIL', 'FECHA', 'VENTA', 'ORDER_ID', 'PHONE', 'STORE_ID', 'TIENE_CUPON', 'FUENTE', 'CANAL'])
     )
     transacciones_cloud = (
         get_transacciones_cloud(session)
         .with_column('FUENTE', lit('CLOUD'))
-        .select(['EMAIL', 'FECHA', 'VENTA', 'ORDER_ID', 'PHONE', 'STORE_ID', 'TIENE_CUPON', 'FUENTE'])
+        .select(['EMAIL', 'FECHA', 'VENTA', 'ORDER_ID', 'PHONE', 'STORE_ID', 'TIENE_CUPON', 'FUENTE', 'CANAL'])
     )
 
     transacciones_total = (
