@@ -1,5 +1,10 @@
 # Guia de estilo para el codigo en este repositorio
 
+## Sobre las funciones que reciban algun DataFrame como parametro
+
+Si una funcion recibe un DataFrame como parametro, se debe tener un bloque de condiciones
+donde se emitan errores descriptivos de la columna que se requiere
+
 ## Sobre el momento adecuado para hacer ciertas operaciones sobre nuestros dataframes
 
 Utilizar select solo al final de los queries cuando ya queramos entregar una tabla
